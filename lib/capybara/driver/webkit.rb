@@ -72,7 +72,13 @@ class Capybara::Driver::Webkit
     begin
       yield
     ensure
-      browser.frame_focus
+      begin
+        browser.frame_focus
+      rescue Capybara::Driver::Webkit::WebkitInvalidResponseError => e
+        unless e.message == 'Already at parent frame.'
+          raise Capybara::Driver::Webkit::WebkitInvalidResponseError.new(e.message)
+        end
+      end
     end
   end
 
