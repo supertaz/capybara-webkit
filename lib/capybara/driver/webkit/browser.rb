@@ -155,7 +155,6 @@ class Capybara::Driver::Webkit
           @stdout.flush
         end
       end
-    rescue EOFError
     end
 
     if !defined?(RUBY_ENGINE) || (RUBY_ENGINE == "ruby" && RUBY_VERSION <= "1.8")
@@ -168,7 +167,11 @@ class Capybara::Driver::Webkit
       end
     else
       def pipe_readable?(pipe)
-        !pipe.eof?
+        begin
+          !pipe.eof?
+        rescue IOError
+          false
+        end
       end
     end
 
